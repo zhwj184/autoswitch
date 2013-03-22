@@ -32,7 +32,7 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 import org.autoswitch.complier.SimpleReturnObjectComplier;
-import org.autoswith.config.ClassMethodStatusManager;
+import org.autoswitch.config.ClassMethodStatusManager;
 
 public class SwitchControlHttpServer {
 

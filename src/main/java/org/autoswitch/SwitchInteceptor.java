@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.autoswitch.complier.SimpleReturnObjectComplier;
-import org.autoswith.config.ClassMethodStatusManager;
+import org.autoswitch.config.ClassMethodStatusManager;
 
 /**
  * 服务开关拦截器
