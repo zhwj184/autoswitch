@@ -35,86 +35,87 @@ java 服务屏蔽开关系统，可以手工降级服务，关闭服务
 classmethod是具体到某个方法名称，status为open关闭该服务，close表示重新打开服务，jsonResult是mock返回结果的json串，
 如果是基本类型，则必须用ret作为key，其他list，bean之类的就直接用json串，type表示如果list有泛型的话则是返回的类完整类型；
    
-   public class TestServiceImpl implements TestService{
   
-	//http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.hello&status=open&jsonResult=1
-	public void hello(){
-		System.out.println("hello");
-	}
+	public class TestServiceImpl implements TestService{
+	  
+		//http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.hello&status=open&jsonResult=1
+		public void hello(){
+			System.out.println("hello");
+		}
+		
+		//http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.sayHello&status=open&jsonResult={ret:%22goodbuy%22}
+		public String sayHello(){
+			return "sayHello";
+		}
+		//http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.getNames&status=open&jsonResult=[{"catList":[],"id":1,"name":"aaa"},{"catList":[],"id":1,"name":"aaa"},{"catList":[],"id":1,"name":"aaa"}]&type=org.autoswitch.test.TestBean
+		public List<TestBean> getNames(){
+			return null;
+		}
+		
+	//	http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.getBeans&status=open&jsonResult={"catList":["123","456","789"],"id":1,"name":"aaa"}
+		public TestBean getBeans(){
+			return null;
+		}
 	
-	//http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.sayHello&status=open&jsonResult={ret:%22goodbuy%22}
-	public String sayHello(){
-		return "sayHello";
 	}
-	//http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.getNames&status=open&jsonResult=[{"catList":[],"id":1,"name":"aaa"},{"catList":[],"id":1,"name":"aaa"},{"catList":[],"id":1,"name":"aaa"}]&type=org.autoswitch.test.TestBean
-	public List<TestBean> getNames(){
-		return null;
-	}
-	
-//	http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.getBeans&status=open&jsonResult={"catList":["123","456","789"],"id":1,"name":"aaa"}
-	public TestBean getBeans(){
-		return null;
-	}
-
-}
 
 
 3调用示例代码
-
-  public class MainTest {
-
-  public static void main(String[] args) {
-		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath*:spring-bean.xml");
-		TestService testControl = (TestService) context.getBean("testService");
-		try{
-			testControl.hello();
-			System.out.println(testControl.sayHello());
-			List<TestBean> list = testControl.getNames();
-			for(TestBean bean: list){
-				System.out.println(bean.getId() + bean.getName() + bean.getCatList());
-			}
-			TestBean bean = testControl.getBeans();
-			System.out.println(bean.getId() + bean.getName() + bean.getCatList());
-		}catch(Exception e){}
-
-		
-		for(int i = 0; i < 10; i++){
+	
+	  public class MainTest {
+	
+	  public static void main(String[] args) {
+			ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("classpath*:spring-bean.xml");
+			TestService testControl = (TestService) context.getBean("testService");
 			try{
-//				testControl.hello();
+				testControl.hello();
 				System.out.println(testControl.sayHello());
-//				List<TestBean> list = testControl.getNames();
-//				for(TestBean bean: list){
-//					System.out.println(bean.getId() + bean.getName() + bean.getCatList());
-//				}
-//				TestBean bean = testControl.getBeans();
-//				System.out.println(bean.getId() + bean.getName() + bean.getCatList());
-			}catch(Exception e){
-				e.printStackTrace();
-			}	
+				List<TestBean> list = testControl.getNames();
+				for(TestBean bean: list){
+					System.out.println(bean.getId() + bean.getName() + bean.getCatList());
+				}
+				TestBean bean = testControl.getBeans();
+				System.out.println(bean.getId() + bean.getName() + bean.getCatList());
+			}catch(Exception e){}
+	
+			
+			for(int i = 0; i < 10; i++){
+				try{
+	//				testControl.hello();
+					System.out.println(testControl.sayHello());
+	//				List<TestBean> list = testControl.getNames();
+	//				for(TestBean bean: list){
+	//					System.out.println(bean.getId() + bean.getName() + bean.getCatList());
+	//				}
+	//				TestBean bean = testControl.getBeans();
+	//				System.out.println(bean.getId() + bean.getName() + bean.getCatList());
+				}catch(Exception e){
+					e.printStackTrace();
+				}	
+			}
+	
 		}
-
 	}
-}
 
 4.输出
   
-Listening on port 8080
-hello
-sayHello
-Incoming connection from /127.0.0.1
-New connection thread
-goodbuy
-goodbuy
-Incoming connection from /127.0.0.1
-New connection thread
-sayHello
-sayHello
-sayHello
-sayHello
-sayHello
-sayHello
-sayHello
-sayHello
+	Listening on port 8080
+	hello
+	sayHello
+	Incoming connection from /127.0.0.1
+	New connection thread
+	goodbuy
+	goodbuy
+	Incoming connection from /127.0.0.1
+	New connection thread
+	sayHello
+	sayHello
+	sayHello
+	sayHello
+	sayHello
+	sayHello
+	sayHello
+	sayHello
 
 这里只是提供一种示例，如果要在生产环境中使用，则需要对并发控制，返回结果的序列化，方法名称一致参数不一致等各种情况进行控制，
 同时还需要对权限，后台管理系统等可以做优化。
