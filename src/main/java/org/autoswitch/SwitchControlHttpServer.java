@@ -92,11 +92,12 @@ class HttpFileHandler implements HttpRequestHandler {
 		String classmethod = params.get("classmethod");
 		String methodstatus = params.get("status");
 		String jsonResult = URLDecoder.decode(params.get("jsonResult"), "utf8");
+		String classType = params.get("type");
 
 		if (methodstatus != null && "open".equalsIgnoreCase(methodstatus)) {
 			ClassMethodStatusManager.getInstance().open(classmethod);
 			boolean ret = SimpleReturnObjectComplier.addJsonRet(classmethod,
-					jsonResult);
+					jsonResult, classType);
 		} else if (methodstatus != null
 				&& "close".equalsIgnoreCase(methodstatus)) {
 			ClassMethodStatusManager.getInstance().close(classmethod);

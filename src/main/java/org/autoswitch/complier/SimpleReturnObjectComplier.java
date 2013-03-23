@@ -1,5 +1,7 @@
 package org.autoswitch.complier;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,12 +18,16 @@ public class SimpleReturnObjectComplier {
 
 	private static Map<String, Object> instanceMap = new ConcurrentHashMap<String, Object>(
 			1000);
+	
+	private static Map<String, String> listTypeMap = new ConcurrentHashMap<String, String>(
+			1000);
 
-	public static boolean addJsonRet(String classMethod, String source) {
+	public static boolean addJsonRet(String classMethod, String source, String classType) {
 		if (classMethod == null || source == null) {
 			return false;
 		}
 		instanceMap.remove(classMethod);
+		listTypeMap.put(classMethod, classType);
 		return sourceMap.put(classMethod, source) != null;
 	}
 
@@ -41,7 +47,12 @@ public class SimpleReturnObjectComplier {
 		}
 		if (retClass.isArray() || retClass.isAssignableFrom(List.class)) {
 			JSONArray jsonArray = JSONArray.fromObject(source);
-			ret = JSONArray.toCollection(jsonArray, TestBean.class);
+			Class type = null;
+			try {
+				type = Class.forName(listTypeMap.get(classMethod));
+			} catch (ClassNotFoundException e) {
+			}
+			ret = JSONArray.toCollection(jsonArray, type);
 		} else {
 			JSONObject jsonObject = JSONObject.fromObject(source);
 			ret = (Object) JSONObject.toBean(jsonObject, retClass);

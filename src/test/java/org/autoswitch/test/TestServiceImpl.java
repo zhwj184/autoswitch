@@ -13,7 +13,7 @@ public class TestServiceImpl implements TestService{
 	public String sayHello(){
 		return "sayHello";
 	}
-	
+	//http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.getNames&status=open&jsonResult=[{"catList":[],"id":1,"name":"aaa"},{"catList":[],"id":1,"name":"aaa"},{"catList":[],"id":1,"name":"aaa"}]&type=org.autoswitch.test.TestBean
 	public List<TestBean> getNames(){
 		return null;
 	}

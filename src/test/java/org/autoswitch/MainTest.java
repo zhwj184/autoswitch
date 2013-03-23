@@ -25,14 +25,14 @@ public class MainTest {
 		
 		for(int i = 0; i < 10; i++){
 			try{
-				testControl.hello();
-				System.out.println(testControl.sayHello());
-//				List<TestBean> list = testControl.getNames();
-//				for(TestBean bean: list){
-//					System.out.println(bean.getId() + bean.getName() + bean.getCatList());
-//				}
-				TestBean bean = testControl.getBeans();
-				System.out.println(bean.getId() + bean.getName() + bean.getCatList());
+//				testControl.hello();
+//				System.out.println(testControl.sayHello());
+				List<TestBean> list = testControl.getNames();
+				for(TestBean bean: list){
+					System.out.println(bean.getId() + bean.getName() + bean.getCatList());
+				}
+//				TestBean bean = testControl.getBeans();
+//				System.out.println(bean.getId() + bean.getName() + bean.getCatList());
 			}catch(Exception e){
 				e.printStackTrace();
 			}	
