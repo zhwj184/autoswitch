@@ -36,7 +36,7 @@ classmethod是具体到某个方法名称，status为open关闭该服务，close
 如果是基本类型，则必须用ret作为key，其他list，bean之类的就直接用json串，type表示如果list有泛型的话则是返回的类完整类型；
    
   
-	public class TestServiceImpl implements TestService{
+		public class TestServiceImpl implements TestService{
 	  
 		//http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.hello&status=open&jsonResult=1
 		public void hello(){
@@ -56,8 +56,8 @@ classmethod是具体到某个方法名称，status为open关闭该服务，close
 		public TestBean getBeans(){
 			return null;
 		}
-	
-	}
+		
+		}
 
 
 3调用示例代码
