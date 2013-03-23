@@ -17,10 +17,10 @@ public class SwitchInteceptor implements MethodInterceptor{
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		Method method = invocation.getMethod();
-		String classMethod = method.getClass().getName() + "." + method.getName();
+		String classMethod = method.getDeclaringClass().getName() + "." + method.getName();
 		if(ClassMethodStatusManager.getInstance().isOpen(classMethod)){
 			Class retClass = method.getReturnType();
-			if(retClass.isAssignableFrom(Void.class)){
+			if(retClass.getName().equals("void")){
 				return 1;
 			}
 			Object obj = SimpleReturnObjectComplier.getRetInstance(classMethod, retClass);	

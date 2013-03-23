@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpException;
@@ -12,7 +16,10 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpServerConnection;
+import org.apache.http.HttpStatus;
 import org.apache.http.MethodNotSupportedException;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.DefaultHttpServerConnection;
@@ -21,6 +28,7 @@ import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.SyncBasicHttpParams;
 import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.HttpRequestHandler;
@@ -69,12 +77,21 @@ class HttpFileHandler implements HttpRequestHandler {
 			throw new MethodNotSupportedException(method
 					+ " method not supported");
 		}
-		String classmethod = (String) request.getParams().getParameter(
-				"classmethod");
-		String methodstatus = (String) request.getParams().getParameter(
-				"status");
-		String jsonResult = (String) request.getParams().getParameter(
-				"jsonResult");
+
+		Map<String, String> params = new HashMap<String, String>();
+		String[] requestparams = request.getRequestLine().getUri()
+				.substring(request.getRequestLine().getUri().indexOf("?") + 1)
+				.split("&");
+		if (requestparams != null && requestparams.length > 0) {
+			for (String pv : requestparams) {
+				String[] kv = pv.split("=");
+				params.put(kv[0], kv[1]);
+			}
+		}
+
+		String classmethod = params.get("classmethod");
+		String methodstatus = params.get("status");
+		String jsonResult = URLDecoder.decode(params.get("jsonResult"), "utf8");
 
 		if (methodstatus != null && "open".equalsIgnoreCase(methodstatus)) {
 			ClassMethodStatusManager.getInstance().open(classmethod);
@@ -85,7 +102,10 @@ class HttpFileHandler implements HttpRequestHandler {
 			ClassMethodStatusManager.getInstance().close(classmethod);
 			SimpleReturnObjectComplier.remove(classmethod);
 		}
-
+		response.setStatusCode(HttpStatus.SC_OK);
+		StringEntity body = new StringEntity("result:success",
+				ContentType.create("text/html", (Charset) null));
+		response.setEntity(body);
 	}
 
 }
@@ -111,13 +131,13 @@ class RequestListenerThread extends Thread {
 
 		// Set up the HTTP protocol processor
 		HttpProcessor httpproc = new ImmutableHttpProcessor(
-				new HttpResponseInterceptor[] { new ResponseDate(),
-						new ResponseServer(), new ResponseContent(),
-						new ResponseConnControl() });
+				new HttpResponseInterceptor[] { new BasicHttpProcessor(),
+						new ResponseDate(), new ResponseServer(),
+						new ResponseContent(), new ResponseConnControl() });
 
 		// Set up request handlers
 		HttpRequestHandlerRegistry reqistry = new HttpRequestHandlerRegistry();
-		reqistry.register("*", new HttpFileHandler());
+		reqistry.register("/control/*", new HttpFileHandler());
 
 		// Set up the HTTP service
 		this.httpService = new HttpService(httpproc,
