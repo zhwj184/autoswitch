@@ -52,7 +52,7 @@ classmethod是具体到某个方法名称，status为open关闭该服务，close
 			return null;
 		}
 		
-	//	http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.getBeans&status=open&jsonResult={"catList":["123","456","789"],"id":1,"name":"aaa"}
+		//http://localhost:8080/control/a.htm?classmethod=org.autoswitch.test.TestServiceImpl.getBeans&status=open&jsonResult={"catList":["123","456","789"],"id":1,"name":"aaa"}
 		public TestBean getBeans(){
 			return null;
 		}
